@@ -176,7 +176,7 @@ export default function TarotApp() {
                     </div>
                     <Card
                     className={`w-64 h-96 sm:w-72 sm:h-[430px] md:w-64 md:h-96 cursor-pointer transition-all duration-300 rounded-2xl levitate ${
-                      revealedCards[index] ? "glow-animation" : "hover:border-accent hover:shadow-xl"
+                      revealedCards[index] ? "glow-animation hover:scale-105 hover:shadow-2xl" : "hover:border-accent hover:shadow-xl"
                     } ${isDrawing ? "flip-animation" : ""} ${zoomingCardIndex === index ? "card-to-modal" : ""}`}
                     onClick={() => revealCard(index)}
                   >
@@ -193,12 +193,18 @@ export default function TarotApp() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col h-full">
+                        <div className="flex flex-col h-full relative group">
                           <img 
                             src={card.frontImageUrl} 
                             alt={card.name} 
                             className="w-full h-full object-cover rounded"
                           />
+                          {/* Click indicator overlay */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-black animate-pulse">
+                              👆 Cliquez pour voir le texte
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -206,6 +212,11 @@ export default function TarotApp() {
                   </div>
                 );
               })}
+            </div>
+            
+            {/* Helpful instruction text */}
+            <div className="text-center mt-6 text-muted-foreground text-sm max-w-md">
+              💡 Appuyez sur une carte pour ouvrir et lire l'interprétation complète.
             </div>
           </>
         )}
@@ -243,8 +254,10 @@ export default function TarotApp() {
             </div>
             
             {/* Instructions */}
-            <div className="text-center text-white text-sm mt-4 opacity-70">
-              Click the card to flip it • Click outside to close
+            <div className="text-center text-white mt-4">
+              <div className="text-sm opacity-70">
+                Appuyez sur l'image pour la retourner et à l'extérieur pour fermer
+              </div>
             </div>
           </div>
         </div>
