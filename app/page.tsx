@@ -33,10 +33,6 @@ const customStyles = `
     transform-style: preserve-3d;
   }
   
-  .zoom-animation {
-    animation: zoomIn 0.6s ease-in-out;
-  }
-  
   .card-3d-container {
     perspective: 1000px;
     transform-style: preserve-3d;
@@ -212,14 +208,14 @@ export default function TarotApp() {
                       {labels[index]}
                     </div>
                     <Card
-                    className={`w-20 h-32 sm:w-32 sm:h-48 md:w-64 md:h-96 cursor-pointer transition-all duration-300 border-border rounded-2xl levitate ${
+                    className={`w-20 h-32 sm:w-32 sm:h-48 md:w-64 md:h-96 cursor-pointer transition-all duration-300 rounded-2xl levitate ${
                       revealedCards[index] ? "glow-animation" : "hover:border-accent hover:shadow-xl"
-                    } ${isDrawing && zoomingCard === index ? "flip-animation" : ""} ${zoomingCard === index ? "zoom-animation" : ""}`}
+                    } ${isDrawing ? "flip-animation" : ""}`}
                     onClick={() => revealCard(index)}
                   >
-                    <div className="w-full h-full flex flex-col items-center justify-center overflow-hidden">
+                    <div className="w-full h-full flex flex-col items-center justify-center overflow-hidden rounded-2xl">
                       {!revealedCards[index] ? (
-                        <div className="relative h-full w-full rounded-2xl">
+                        <div className="relative h-full w-full">
                           <img 
                             src={card.frontImageUrl} 
                             alt="Card back" 
