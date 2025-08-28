@@ -55,6 +55,8 @@ export default function TarotApp() {
   const [isDrawing, setIsDrawing] = useState(false)
   const [enlargedCard, setEnlargedCard] = useState<TarotCard | null>(null)
   const [cardFlipped, setCardFlipped] = useState(false)
+  const [zoomingCardIndex, setZoomingCardIndex] = useState<number | null>(null)
+  const [showModal, setShowModal] = useState(false)
 
   const drawCards = () => {
     setIsDrawing(true)
@@ -73,10 +75,16 @@ export default function TarotApp() {
   const revealCard = (index: number) => {
     if (selectedCards.length === 0) return
 
-    // If card is already revealed, enlarge it
+    // If card is already revealed, enlarge it with zoom animation
     if (revealedCards[index]) {
-      setEnlargedCard(selectedCards[index])
-      setCardFlipped(false)
+      setZoomingCardIndex(index)
+      
+      setTimeout(() => {
+        setEnlargedCard(selectedCards[index])
+        setCardFlipped(false)
+        setShowModal(true)
+        setZoomingCardIndex(null)
+      }, 300) // Match animation duration
       return
     }
 
@@ -87,6 +95,7 @@ export default function TarotApp() {
   }
 
   const closeEnlargedView = () => {
+    setShowModal(false)
     setEnlargedCard(null)
     setCardFlipped(false)
   }
@@ -132,7 +141,7 @@ export default function TarotApp() {
                     <Card
                     className={`w-64 h-96 sm:w-72 sm:h-[430px] md:w-64 md:h-96 cursor-pointer transition-all duration-300 rounded-2xl levitate ${
                       revealedCards[index] ? "glow-animation" : "hover:border-accent hover:shadow-xl"
-                    } ${isDrawing ? "flip-animation" : ""}`}
+                    } ${isDrawing ? "flip-animation" : ""} ${zoomingCardIndex === index ? "card-to-modal" : ""}`}
                     onClick={() => revealCard(index)}
                   >
                     <div className="w-full h-full flex flex-col items-center justify-center overflow-hidden rounded-2xl">
@@ -167,12 +176,12 @@ export default function TarotApp() {
       </div>
 
       {/* Enlarged Card Modal with 3D Animation */}
-      {enlargedCard && (
+      {enlargedCard && showModal && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
           onClick={closeEnlargedView}
         >
-          <div className="relative card-3d-container" onClick={(e) => e.stopPropagation()}>
+          <div className="relative card-3d-container modal-from-card" onClick={(e) => e.stopPropagation()}>
             {/* 3D Card Container */}
             <div 
               className={`card-3d w-80 h-96 sm:w-96 sm:h-[480px] ${cardFlipped ? 'flipped' : ''}`}

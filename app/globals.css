@@ -188,6 +188,28 @@
   }
 }
 
+@keyframes cardToModal {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes modalFromCard {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* Animation classes */
 .flip-animation {
   animation: flip-card 0.8s ease-in-out;
@@ -209,6 +231,14 @@
 
 .zoom-animation {
   animation: zoomIn 0.6s ease-in-out;
+}
+
+.card-to-modal {
+  animation: cardToModal 0.3s ease-out forwards;
+}
+
+.modal-from-card {
+  animation: modalFromCard 0.3s ease-out forwards;
 }
 
 /* 3D Card styles */
