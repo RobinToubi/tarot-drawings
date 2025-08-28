@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
@@ -57,8 +57,34 @@ export default function TarotApp() {
   const [cardFlipped, setCardFlipped] = useState(false)
   const [zoomingCardIndex, setZoomingCardIndex] = useState<number | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [hasDrawn, setHasDrawn] = useState(false)
+
+  // Load saved reading from localStorage on component mount
+  useEffect(() => {
+    const savedReading = localStorage.getItem('tarotReading')
+    if (savedReading) {
+      const { selectedCards: savedCards, revealedCards: savedRevealed } = JSON.parse(savedReading)
+      setSelectedCards(savedCards)
+      setRevealedCards(savedRevealed)
+      setHasDrawn(true)
+    }
+  }, [])
+
+  // Save reading to localStorage whenever selectedCards or revealedCards change
+  useEffect(() => {
+    if (selectedCards.length > 0) {
+      const readingData = {
+        selectedCards,
+        revealedCards
+      }
+      localStorage.setItem('tarotReading', JSON.stringify(readingData))
+    }
+  }, [selectedCards, revealedCards])
 
   const drawCards = () => {
+    // Prevent drawing if user has already drawn cards
+    if (hasDrawn) return
+    
     setIsDrawing(true)
     setRevealedCards([false, false, false])
 
@@ -66,10 +92,20 @@ export default function TarotApp() {
     const shuffled = [...tarotCards].sort(() => Math.random() - 0.5)
     const drawn = shuffled.slice(0, 3)
     setSelectedCards(drawn)
+    setHasDrawn(true)
 
     setTimeout(() => {
       setIsDrawing(false)
     }, 1000)
+  }
+
+  const resetReading = () => {
+    localStorage.removeItem('tarotReading')
+    setSelectedCards([])
+    setRevealedCards([false, false, false])
+    setHasDrawn(false)
+    setEnlargedCard(null)
+    setShowModal(false)
   }
 
   const revealCard = (index: number) => {
@@ -120,10 +156,10 @@ export default function TarotApp() {
           <div className="text-center">
             <Button
               onClick={drawCards}
-              disabled={isDrawing}
-              className="text-lg px-8 py-4 bg-primary hover:bg-primary/90 text-primary-foreground glow-animation"
+              disabled={isDrawing || hasDrawn}
+              className="text-lg px-8 py-4 bg-primary hover:bg-primary/90 text-primary-foreground glow-animation disabled:opacity-50"
             >
-              {isDrawing ? "Drawing Cards..." : "Draw Your Cards"}
+              {isDrawing ? "Drawing Cards..." : hasDrawn ? "Cards Already Drawn" : "Draw Your Cards"}
             </Button>
           </div>
         ) : (
